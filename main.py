@@ -4,6 +4,15 @@ import os
 from openai import OpenAI
 
 app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # allow all (safe for now)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ⭐ OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
