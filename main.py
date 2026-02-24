@@ -2,29 +2,36 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import os
 from openai import OpenAI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-from fastapi.middleware.cors import CORSMiddleware
-
+# ✅ CORS FIX (IMPORTANT)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://legendary-gaufre-c10108.netlify.app"],   # allow all (safe for now)
+    allow_origins=["*"],  # you can restrict later
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ⭐ OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# ✅ Validate API key
+api_key = os.getenv("OPENAI_API_KEY")
 
-# ⭐ request model
+if not api_key:
+    raise RuntimeError("OPENAI_API_KEY not found in environment")
+
+# ✅ OpenAI client
+client = OpenAI(api_key=api_key)
+
+
+# ✅ request model
 class ChatRequest(BaseModel):
     message: str
     history: list = []
 
 
-# ⭐ SYSTEM PROMPT (VERY IMPORTANT — your AI personality)
+# ✅ SYSTEM PROMPT
 SYSTEM_PROMPT = """
 You are a deeply emotional, warm, affectionate birthday wisher.
 
@@ -47,19 +54,27 @@ Rules:
 - never sound robotic
 """
 
+
+# ✅ health route (for debugging)
+@app.get("/")
+def root():
+    return {"status": "alive"}
+
+
+# ✅ chat route
 @app.post("/chat")
 async def chat(req: ChatRequest):
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
-    # ⭐ add history
+    # add history
     for h in req.history:
         messages.append(h)
 
-    # ⭐ add new user message
+    # add user message
     messages.append({"role": "user", "content": req.message})
 
-    # ⭐ call OpenAI
+    # call OpenAI
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=messages,
