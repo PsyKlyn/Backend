@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # allow all (safe for now)
+    allow_origins=["https://legendary-gaufre-c10108.netlify.app/"],   # allow all (safe for now)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
