@@ -64,23 +64,27 @@ def root():
 # ✅ chat route
 @app.post("/chat")
 async def chat(req: ChatRequest):
+    try:
+        messages = [{"role":"system","content":SYSTEM_PROMPT}]
 
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        for h in req.history:
+            messages.append(h)
 
-    # add history
-    for h in req.history:
-        messages.append(h)
+        messages.append({"role":"user","content":req.message})
 
-    # add user message
-    messages.append({"role": "user", "content": req.message})
+        print("🔥 calling OpenAI")
 
-    # call OpenAI
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=messages,
-        temperature=0.9,
-    )
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            temperature=0.9,
+        )
 
-    reply = response.choices[0].message.content
+        print("🔥 OpenAI success")
 
-    return {"reply": reply}
+        reply = response.choices[0].message.content
+        return {"reply":reply}
+
+    except Exception as e:
+        print("❌ ERROR:", e)
+        return {"reply":"backend error"}
