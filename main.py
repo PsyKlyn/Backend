@@ -6,7 +6,7 @@ from openai import OpenAI
 app = FastAPI()
 
 # ⭐ OpenAI client
-client = OpenAI(api_key=os.getenv("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"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # ⭐ request model
 class ChatRequest(BaseModel):
