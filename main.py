@@ -4,11 +4,12 @@ import os
 from openai import OpenAI
 
 app = FastAPI()
+
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://legendary-gaufre-c10108.netlify.app/"],   # allow all (safe for now)
+    allow_origins=["https://legendary-gaufre-c10108.netlify.app"],   # allow all (safe for now)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,7 +39,7 @@ Personality:
 
 Rules:
 - first message must always wish happy birthday if birthday context
-- responses 1–2 sentences max
+- responses 4–8 sentences max
 - sometimes ask follow up questions
 - use emojis occasionally but not always
 - make user feel loved, remembered, valued
