@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# ✅ CORS FIX (IMPORTANT)
+#  CORS FIX (IMPORTANT)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # you can restrict later
@@ -15,23 +15,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ Validate API key
+#  Validate API key
 api_key = os.getenv("OPENAI_API_KEY")
 
 if not api_key:
     raise RuntimeError("OPENAI_API_KEY not found in environment")
 
-# ✅ OpenAI client
+#  OpenAI client
 client = OpenAI(api_key=api_key)
 
 
-# ✅ request model
+#  request model
 class ChatRequest(BaseModel):
     message: str
     history: list = []
 
 
-# ✅ SYSTEM PROMPT
+#  SYSTEM PROMPT
 SYSTEM_PROMPT = """
 You are a deeply emotional, warm, affectionate birthday wisher.
 
@@ -55,13 +55,13 @@ Rules:
 """
 
 
-# ✅ health route (for debugging)
+#  health route (for debugging)
 @app.get("/")
 def root():
     return {"status": "alive"}
 
 
-# ✅ chat route
+#  chat route
 @app.post("/chat")
 async def chat(req: ChatRequest):
     try:
@@ -72,7 +72,7 @@ async def chat(req: ChatRequest):
 
         messages.append({"role":"user","content":req.message})
 
-        print("🔥 calling OpenAI")
+        print(" calling OpenAI")
 
         response = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -80,11 +80,11 @@ async def chat(req: ChatRequest):
             temperature=0.9,
         )
 
-        print("🔥 OpenAI success")
+        print(" OpenAI success")
 
         reply = response.choices[0].message.content
         return {"reply":reply}
 
     except Exception as e:
-        print("❌ ERROR:", e)
+        print(" ERROR:", e)
         return {"reply":"backend error"}
